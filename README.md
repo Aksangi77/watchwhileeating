@@ -26,7 +26,7 @@ All content comes from the [Lemmy API](https://lemmy.cafe/api/v3) — specifical
 
 ## Analytics
 
-This site uses [GoatCounter](https://www.goatcounter.com) — a lightweight, open-source, privacy-friendly analytics service. No cookies, no personal data collected, just aggregate page view counts. You can see the stats at [aksangi.goatcounter.com](https://aksangi.goatcounter.com).
+This site uses [GoatCounter](https://www.goatcounter.com) — a lightweight, open-source, privacy-friendly analytics service. No cookies, no personal data collected, just aggregate page view counts. The dashboard is private.
 
 ## License
 
