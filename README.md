@@ -10,7 +10,7 @@ Built because digging through forum threads while eating wasn't cutting it — w
 - Watch view with YouTube embed, comments, and related videos
 - Material You theming (Pink & Blue, Light & Dark)
 - Fully responsive — works on desktop and mobile
-- Single HTML file — no build step, no framework, no tracking
+- Single HTML file — no build step, no framework
 
 ## Usage
 
@@ -22,7 +22,11 @@ python3 -m http.server 8080
 
 ## Data Source
 
-All content comes from the [Lemmy API](https://lemmy.cafe/api/v3) — specifically the `!mealtimevideos` community. No tracking, no cookies, no third-party scripts (except the YouTube IFrame Player API for video playback).
+All content comes from the [Lemmy API](https://lemmy.cafe/api/v3) — specifically the `!mealtimevideos` community. No cookies or third-party scripts (except the YouTube IFrame Player API for video playback).
+
+## Analytics
+
+This site uses [GoatCounter](https://www.goatcounter.com) — a lightweight, open-source, privacy-friendly analytics service. No cookies, no personal data collected, just aggregate page view counts. You can see the stats at [aksangi.goatcounter.com](https://aksangi.goatcounter.com).
 
 ## License
 
