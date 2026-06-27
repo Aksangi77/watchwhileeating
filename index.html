@@ -1,0 +1,1310 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="pink" data-mode="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WatchWhileEating — Videos to watch while eating</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🍿</text></svg>">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+    --radius-sm: 0.5rem;
+    --radius-md: 0.75rem;
+    --radius-lg: 1rem;
+    --radius-xl: 1.75rem;
+    --transition: 200ms cubic-bezier(0.2, 0, 0, 1);
+    --elevation-0: none;
+    --elevation-1: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+    --elevation-2: 0 4px 6px rgba(0,0,0,0.05), 0 2px 4px rgba(0,0,0,0.05);
+    --elevation-3: 0 10px 15px rgba(0,0,0,0.06), 0 4px 6px rgba(0,0,0,0.04);
+    --elevation-4: 0 16px 24px rgba(0,0,0,0.08), 0 6px 8px rgba(0,0,0,0.04);
+  }
+
+  /* === Pink — Light (seed: #db2777) === */
+  [data-theme="pink"][data-mode="light"] {
+    --bg: #fff8f8; --fg: #1f1b1b; --fg-secondary: #514346;
+    --card-bg: #fff8f8; --card-border: #d5c2c5;
+    --primary: #b8255e; --primary-hover: #9e1d4f; --primary-fg: #ffffff;
+    --secondary: #fef0f0; --secondary-hover: #f8e8e9; --secondary-fg: #1f1b1b;
+    --muted: #f2dee1; --muted-fg: #847376;
+    --accent: #fef0f0; --accent-hover: #f2e2e3; --accent-fg: #1f1b1b;
+    --border: #d5c2c5; --input: #d5c2c5; --ring: #b8255e;
+    --skeleton: #ecddde;
+    --player-bg: #0f0f0f;
+    --comment-bg: #fef0f0;
+  }
+
+  /* === Pink — Dark === */
+  [data-theme="pink"][data-mode="dark"] {
+    --bg: #1f1b1b; --fg: #ebe0df; --fg-secondary: #d5c2c5;
+    --card-bg: #2b2324; --card-border: #514346;
+    --primary: #ffb1c8; --primary-hover: #ffc5d7; --primary-fg: #590030;
+    --secondary: #271f20; --secondary-hover: #362e2e; --secondary-fg: #ebe0df;
+    --muted: #514346; --muted-fg: #9e8c8f;
+    --accent: #271f20; --accent-hover: #362e2e; --accent-fg: #ebe0df;
+    --border: #514346; --input: #514346; --ring: #ffb1c8;
+    --skeleton: #362e2e;
+    --player-bg: #000000;
+    --comment-bg: #271f20;
+    color-scheme: dark;
+  }
+
+  /* === Blue — Light (seed: #1a6bff) === */
+  [data-theme="blue"][data-mode="light"] {
+    --bg: #fdfbff; --fg: #1c1b1f; --fg-secondary: #45464f;
+    --card-bg: #fdfbff; --card-border: #c6c6d0;
+    --primary: #1a6bff; --primary-hover: #0054d9; --primary-fg: #ffffff;
+    --secondary: #f7f4fa; --secondary-hover: #f1eef4; --secondary-fg: #1c1b1f;
+    --muted: #e2e2ec; --muted-fg: #757680;
+    --accent: #f7f4fa; --accent-hover: #f1eef4; --accent-fg: #1c1b1f;
+    --border: #c6c6d0; --input: #c6c6d0; --ring: #1a6bff;
+    --skeleton: #e5e2e9;
+    --player-bg: #0f0f0f;
+    --comment-bg: #f7f4fa;
+  }
+
+  /* === Blue — Dark === */
+  [data-theme="blue"][data-mode="dark"] {
+    --bg: #1c1b1f; --fg: #e5e1e6; --fg-secondary: #c6c6d0;
+    --card-bg: #28272b; --card-border: #45464f;
+    --primary: #b1c9ff; --primary-hover: #c5d8ff; --primary-fg: #002e65;
+    --secondary: #242327; --secondary-hover: #323136; --secondary-fg: #e5e1e6;
+    --muted: #45464f; --muted-fg: #90909a;
+    --accent: #242327; --accent-hover: #323136; --accent-fg: #e5e1e6;
+    --border: #45464f; --input: #45464f; --ring: #b1c9ff;
+    --skeleton: #323136;
+    --player-bg: #000000;
+    --comment-bg: #242327;
+    color-scheme: dark;
+  }
+
+  html { height: 100%; font-family: var(--font-sans); background: var(--bg); color: var(--fg); line-height: 1.5; -webkit-font-smoothing: antialiased; }
+  body { height: 100%; overflow: hidden; display: flex; flex-direction: column; background: var(--bg); }
+  #browseView, #watchView { height: 100%; display: flex; flex-direction: column; overflow: hidden; }
+  .scroll-wrap { flex: 1; overflow-y: auto; overflow-x: hidden; scroll-behavior: smooth; margin-bottom: calc(3.5rem + env(safe-area-inset-bottom, 0px)); }
+
+  .scroll-wrap::-webkit-scrollbar { width: 5px; }
+  .scroll-wrap::-webkit-scrollbar-track { background: transparent; }
+  .scroll-wrap::-webkit-scrollbar-thumb { background: var(--muted-fg); border-radius: 3px; }
+  .scroll-wrap::-webkit-scrollbar-thumb:hover { background: var(--fg-secondary); }
+  .scroll-wrap { scrollbar-width: thin; scrollbar-color: var(--muted-fg) transparent; }
+  a { color: var(--primary); text-decoration: none; font-weight: 500; }
+  a:hover { text-decoration: underline; }
+  button { cursor: pointer; font-family: inherit; touch-action: manipulation; }
+  svg { display: block; }
+  img { display: block; max-width: 100%; }
+  .video-card, .related-card, .footer-about, .modal-close { touch-action: manipulation; }
+  .search-input { -webkit-appearance: none; }
+
+  .top-bar {
+    display: flex; align-items: center; gap: 0.75rem;
+    padding: 0.625rem 1rem;
+    background: color-mix(in srgb, var(--bg) 88%, transparent);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    position: relative; z-index: 50;
+    box-shadow: var(--elevation-1);
+  }
+  .top-bar-left { display: flex; align-items: center; gap: 0.5rem; flex-shrink: 0; }
+  .top-bar-center { display: flex; align-items: center; gap: 0.75rem; flex: 1; max-width: 480px; margin: 0 auto; }
+  .top-bar-right { display: flex; align-items: center; gap: 0.25rem; flex-shrink: 0; }
+
+  .logo { font-size: 1.25rem; font-weight: 800; letter-spacing: -0.03em; white-space: nowrap; color: var(--fg); cursor: pointer; display: flex; align-items: center; gap: 0.375rem; }
+
+  .sort-dropdown { display: none; position: relative; }
+  .sort-dropdown-btn {
+    display: flex; align-items: center; gap: 0.25rem;
+    padding: 0.375rem 0.5rem; border-radius: var(--radius-md);
+    border: 1px solid var(--border); background: var(--secondary);
+    color: var(--fg); font-size: 0.8125rem; font-weight: 500;
+    cursor: pointer; white-space: nowrap; transition: var(--transition);
+  }
+  .sort-dropdown-btn:hover { background: var(--secondary-hover); }
+  .sort-dropdown-btn svg { flex-shrink: 0; }
+  .sort-dropdown-menu {
+    display: none; position: fixed; z-index: 100;
+    min-width: 140px;
+    background: var(--bg); border: 1px solid var(--border);
+    border-radius: var(--radius-md); box-shadow: var(--elevation-3);
+    padding: 0.25rem; overflow: hidden;
+  }
+  .sort-dropdown-menu.open { display: block; }
+  .sort-dropdown-item {
+    display: block; width: 100%; padding: 0.5rem 0.75rem;
+    border: none; background: none; color: var(--fg-secondary);
+    font-size: 0.8125rem; font-weight: 500; text-align: left;
+    cursor: pointer; border-radius: var(--radius-sm); transition: var(--transition);
+    white-space: nowrap;
+  }
+  .sort-dropdown-item:hover { background: var(--accent-hover); color: var(--fg); }
+  .sort-dropdown-item.active { color: var(--primary); font-weight: 600; }
+  .sort-dropdown-group { position: relative; padding: 0 0.75rem 0 0; }
+  .sort-dropdown-group > .sort-dropdown-item { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; }
+  .sub-arrow { font-size: 0.625rem; color: var(--muted-fg); }
+  .sub-dropdown {
+    display: none; position: fixed; z-index: 101;
+    min-width: 120px;
+    background: var(--bg); border: 1px solid var(--border);
+    border-radius: var(--radius-md); box-shadow: var(--elevation-3);
+    padding: 0.25rem;
+  }
+  .sub-dropdown.open { display: block; }
+  .sub-dropdown .sort-dropdown-item { font-size: 0.75rem; }
+
+  .search-toggle { display: none; width: 2.25rem; height: 2.25rem; border-radius: var(--radius-md); border: 1px solid var(--border); background: var(--secondary); align-items: center; justify-content: center; font-size: 1.125rem; cursor: pointer; transition: var(--transition); }
+  .search-toggle:hover { background: var(--secondary-hover); }
+
+  .search-wrapper { position: relative; flex: 1; display: flex; align-items: center; }
+  .search-wrapper .search-icon {
+    position: absolute; left: 1rem; top: 50%; transform: translateY(-50%);
+    width: 1.125rem; height: 1.125rem; color: var(--muted-fg); pointer-events: none;
+  }
+  .search-wrapper .search-close {
+    display: none; position: absolute; right: 0.5rem; top: 50%; transform: translateY(-50%);
+    width: 1.75rem; height: 1.75rem; border: none; background: none;
+    color: var(--fg-secondary); font-size: 1rem; cursor: pointer; border-radius: var(--radius-sm);
+    align-items: center; justify-content: center; padding: 0;
+  }
+  .search-wrapper .search-close:hover { background: var(--secondary-hover); color: var(--fg); }
+  .search-input {
+    width: 100%; padding: 0.625rem 1rem 0.625rem 2.75rem;
+    background: var(--accent); border: 1px solid var(--input); border-radius: var(--radius-xl);
+    color: var(--fg); font-size: 0.875rem; font-family: inherit;
+    outline: none; transition: var(--transition);
+  }
+  .search-input:focus { border-color: var(--ring); box-shadow: inset 0 0 0 1px var(--ring); background: var(--bg); }
+  .search-input::placeholder { color: var(--muted-fg); }
+
+  .theme-btn, .mode-toggle {
+    width: 2.25rem; height: 2.25rem; border-radius: var(--radius-md);
+    border: 1px solid var(--border); background: var(--secondary);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1rem; transition: var(--transition);
+  }
+  .theme-btn:hover, .mode-toggle:hover { background: var(--secondary-hover); }
+  .theme-btn.active { border-color: var(--ring); background: var(--secondary); box-shadow: 0 0 0 2px color-mix(in srgb, var(--ring) 25%, transparent); }
+
+  .controls-row {
+    display: flex; align-items: center; gap: 0.75rem;
+    padding: 0.75rem 1.5rem; border-bottom: 1px solid var(--border);
+    background: color-mix(in srgb, var(--secondary) 92%, transparent);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    position: relative; z-index: 40;
+  }
+  .sort-bar { display: flex; align-items: center; justify-content: center; gap: 0.375rem; flex-wrap: wrap; flex: 1; }
+  .sort-btn {
+    padding: 0.5rem 1rem; border-radius: var(--radius-xl);
+    border: 1px solid var(--border); background: transparent;
+    color: var(--fg-secondary); font-size: 0.8125rem; font-weight: 500;
+    transition: var(--transition); white-space: nowrap;
+  }
+  .sort-btn:hover { background: var(--accent-hover); color: var(--fg); }
+  .sort-btn.active { background: var(--primary); color: var(--primary-fg); border-color: var(--primary); box-shadow: var(--elevation-1); }
+
+  .time-select-wrapper { position: relative; display: inline-flex; align-items: center; }
+
+  .browse-container { max-width: 1800px; margin: 0 auto; padding: 1.5rem 1.5rem 4.5rem; width: 100%; flex: 1; }
+
+  .video-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1.25rem;
+  }
+
+  .video-card {
+    background: var(--card-bg); border: 1px solid var(--card-border);
+    border-radius: var(--radius-lg); overflow: hidden;
+    transition: var(--transition); cursor: pointer;
+    display: flex; flex-direction: column;
+    box-shadow: var(--elevation-1);
+  }
+  .video-card:hover { border-color: var(--ring); box-shadow: var(--elevation-3); transform: translateY(-4px); }
+
+  .card-thumb { position: relative; aspect-ratio: 16/9; overflow: hidden; background: var(--skeleton); }
+  .card-thumb img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s cubic-bezier(0.2, 0, 0, 1); }
+  .video-card:hover .card-thumb img { transform: scale(1.08); }
+  .card-duration {
+    position: absolute; bottom: 0.5rem; right: 0.5rem;
+    background: rgba(0,0,0,0.8); color: #fff;
+    padding: 0.125rem 0.5rem; border-radius: var(--radius-sm);
+    font-size: 0.75rem; font-weight: 600; letter-spacing: 0.02em;
+  }
+  .card-body { padding: 0.875rem 1rem 1rem; flex: 1; display: flex; flex-direction: column; gap: 0.375rem; }
+  .card-title { font-size: 0.95rem; font-weight: 600; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .card-meta { display: flex; align-items: center; gap: 0.5rem; font-size: 0.8rem; color: var(--fg-secondary); }
+  .card-meta .card-avatar { width: 1.25rem; height: 1.25rem; border-radius: 9999px; object-fit: cover; }
+  .card-channel { font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 0.8rem; }
+  .card-stats { display: flex; align-items: center; gap: 0.75rem; margin-top: auto; padding-top: 0.5rem; font-size: 0.8rem; color: var(--fg-secondary); }
+  .card-stat { display: flex; align-items: center; gap: 0.25rem; }
+  .card-stat svg { width: 0.875rem; height: 0.875rem; }
+
+  .status-bar { display: flex; justify-content: center; align-items: center; gap: 0.75rem; padding: 1.5rem 0; min-height: 3rem; }
+  .spinner { width: 1.5rem; height: 1.5rem; border-radius: 50%; border: 2px solid var(--border); border-top-color: var(--primary); animation: spin 0.6s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .error-msg { text-align: center; padding: 3rem 1rem; color: #ef4444; display: flex; flex-direction: column; align-items: center; gap: 1rem; }
+  .error-msg svg { width: 2rem; height: 2rem; }
+  .empty-state { text-align: center; padding: 3rem 1rem; color: var(--fg-secondary); grid-column: 1 / -1; }
+
+  .footer {
+    position: fixed; bottom: 0; left: 0; right: 0; z-index: 40;
+    text-align: center; padding: 0.625rem 1.5rem;
+    padding-bottom: calc(0.625rem + env(safe-area-inset-bottom, 0px));
+    border-top: 1px solid var(--border);
+    background: color-mix(in srgb, var(--bg) 88%, transparent);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    font-size: 0.75rem; color: var(--fg-secondary);
+    display: flex; flex-direction: column; gap: 0.125rem;
+  }
+  .footer-sub { opacity: 0.7; }
+  .footer-sub strong { font-weight: 600; }
+  .footer-about {
+    background: none; border: none; color: var(--primary); font-size: inherit;
+    padding: 0; font-family: inherit; cursor: pointer;
+    transition: var(--transition);
+  }
+  .footer-about:hover { text-decoration: underline; }
+
+  .modal-overlay {
+    position: fixed; inset: 0; z-index: 100;
+    background: rgba(0,0,0,0.45);
+    display: none; align-items: center; justify-content: center;
+    padding: 1.5rem;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: var(--bg); border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    max-width: 460px; width: 100%;
+    box-shadow: var(--elevation-4);
+    position: relative;
+    animation: modalIn 0.2s ease-out;
+  }
+  @keyframes modalIn {
+    from { opacity: 0; transform: scale(0.95) translateY(8px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
+  }
+  .modal-close {
+    position: absolute; top: 0.75rem; right: 0.75rem;
+    width: 2rem; height: 2rem; border-radius: 9999px;
+    border: none; background: var(--secondary);
+    color: var(--fg); font-size: 1.25rem;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; transition: var(--transition);
+  }
+  .modal-close:hover { background: var(--secondary-hover); }
+  .modal-body { padding: 1.75rem 1.5rem 1.5rem; }
+  .modal-title { font-size: 1.2rem; font-weight: 700; margin-bottom: 0.75rem; }
+  .modal-desc { font-size: 0.85rem; line-height: 1.6; color: var(--fg-secondary); margin-bottom: 0.5rem; }
+  .modal-desc a { color: var(--primary); }
+
+  /* ===== Watch View ===== */
+  #watchView { display: none; background: var(--bg); }
+
+  .watch-layout { display: flex; gap: 1.5rem; padding: 1rem 0.25rem 4.5rem; padding-bottom: calc(4.5rem + env(safe-area-inset-bottom, 0px)); max-width: 1800px; margin: 0 auto; }
+  .watch-main { flex: 1; min-width: 0; }
+
+  .player-wrapper { position: relative; width: 100%; aspect-ratio: 16 / 9; min-height: 35vh; background: var(--player-bg); overflow: hidden; border-radius: var(--radius-lg); box-shadow: var(--elevation-2); }
+  .player-wrapper iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; display: block; border-radius: var(--radius-lg); }
+
+  .player-loading {
+    position: absolute; inset: 0; z-index: 10;
+    background: var(--player-bg);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 1rem; transition: opacity 0.3s; border-radius: var(--radius-lg);
+  }
+  .player-loading.hidden { display: none; }
+  .player-loading .spinner { width: 2.5rem; height: 2.5rem; border-width: 3px; }
+  .player-loading-text { font-size: 0.85rem; color: #888; }
+
+  .play-overlay {
+    position: absolute; inset: 0; z-index: 5;
+    display: none; align-items: center; justify-content: center;
+    cursor: pointer; background: rgba(0,0,0,0.35);
+    transition: opacity 0.2s; border-radius: var(--radius-lg);
+  }
+  .play-overlay:hover { background: rgba(0,0,0,0.25); }
+  .play-btn {
+    width: 68px; height: 48px; border: none; border-radius: 14px;
+    background: rgba(0,0,0,0.7); cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.15s;
+  }
+  .play-btn:hover { background: #cc0000; }
+  .play-btn svg { width: 22px; height: 22px; fill: #fff; margin-left: 3px; }
+
+  .watch-info { padding: 1.25rem 0; border-bottom: 1px solid var(--border); }
+  .watch-title { font-size: 1.35rem; font-weight: 700; line-height: 1.35; margin-bottom: 0.75rem; letter-spacing: -0.01em; }
+  .watch-meta-row { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
+  .watch-author { display: flex; align-items: center; gap: 0.5rem; font-weight: 600; font-size: 0.9rem; }
+  .watch-author img { width: 2.5rem; height: 2.5rem; border-radius: 9999px; object-fit: cover; }
+  .watch-stats { display: flex; align-items: center; gap: 0.75rem; font-size: 0.85rem; color: var(--fg-secondary); }
+  .watch-stats span { display: flex; align-items: center; gap: 0.25rem; }
+  .watch-stats svg { width: 1rem; height: 1rem; }
+  .watch-description { margin-top: 1rem; padding: 0.75rem 1rem; background: var(--comment-bg); border: 1px solid var(--border); border-radius: var(--radius-lg); font-size: 0.85rem; color: var(--fg-secondary); line-height: 1.6; white-space: pre-wrap; }
+
+  .comments-section { padding: 1rem 0; }
+  .comments-header { font-size: 1rem; font-weight: 600; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; }
+  .comments-header svg { width: 1.25rem; height: 1.25rem; }
+  .comment { display: flex; gap: 0.75rem; padding: 0.75rem 0; border-bottom: 1px solid var(--border); }
+  .comment:last-child { border-bottom: none; }
+  .comment-avatar { width: 2.25rem; height: 2.25rem; border-radius: 9999px; background: var(--muted); flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 600; color: var(--fg-secondary); overflow: hidden; }
+  .comment-avatar img { width: 100%; height: 100%; object-fit: cover; }
+  .comment-body { min-width: 0; flex: 1; }
+  .comment-author { font-weight: 600; font-size: 0.8rem; }
+  .comment-time { font-size: 0.75rem; color: var(--muted-fg); margin-left: 0.5rem; }
+  .comment-content { font-size: 0.85rem; margin-top: 0.25rem; line-height: 1.5; word-wrap: break-word; }
+  .comment-score { font-size: 0.75rem; color: var(--fg-secondary); margin-top: 0.25rem; display: flex; align-items: center; gap: 0.25rem; }
+
+  .watch-sidebar { width: 400px; flex-shrink: 0; }
+  .sidebar-header { font-size: 1rem; font-weight: 600; margin-bottom: 0.75rem; }
+  .related-card { display: flex; gap: 0.625rem; padding: 0.5rem; cursor: pointer; border-radius: var(--radius-md); transition: var(--transition); }
+  .related-card:hover { background: var(--accent-hover); }
+  .related-thumb { width: 200px; aspect-ratio: 16/9; flex-shrink: 0; background: var(--skeleton); border-radius: var(--radius-md); overflow: hidden; }
+  .related-thumb img { width: 100%; height: 100%; object-fit: cover; }
+  .related-info { min-width: 0; flex: 1; }
+  .related-title { font-size: 0.9rem; font-weight: 600; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; margin-bottom: 0.25rem; }
+  .related-meta { font-size: 0.8rem; color: var(--fg-secondary); line-height: 1.4; }
+
+  .fade-in { animation: fadeIn 0.35s ease-out; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+
+  @media (hover: none) {
+    .video-card:hover { border-color: var(--card-border); box-shadow: var(--elevation-1); transform: none; }
+    .video-card:hover .card-thumb img { transform: none; }
+  }
+
+  @media (max-width: 1100px) {
+    .watch-layout { flex-direction: column; padding: 0.5rem 0.75rem; }
+    .watch-sidebar { width: 100%; padding: 0 0 2rem; }
+    .watch-main { padding: 0; }
+    .related-thumb { width: 168px; }
+  }
+
+  @media (max-width: 768px) {
+    .controls-row { display: none; }
+    .sort-dropdown { display: block; }
+    .top-bar-center .search-wrapper { display: none; }
+    .search-toggle { display: flex; }
+    .top-bar-center { flex: 1; order: 2; max-width: none; min-width: 0; overflow: hidden; }
+    .top-bar-left { order: 1; flex-shrink: 0; }
+    .top-bar-right { order: 3; margin-left: auto; flex-shrink: 0; }
+    .top-bar { gap: 0.5rem; }
+    .top-bar.search-open .logo { display: none; }
+    .top-bar.search-open .top-bar-right { display: none; }
+    .top-bar.search-open .top-bar-center .search-wrapper { display: flex; flex: 1; min-width: 0; }
+    .top-bar.search-open .search-wrapper .search-close { display: flex; }
+    .browse-container { padding: 0.75rem; }
+    .video-grid { grid-template-columns: 1fr; gap: 1rem; }
+    .watch-title { font-size: 1.1rem; }
+    .player-wrapper { min-height: 35vh; }
+    .related-thumb { width: 140px; }
+    .related-card { padding: 0.5rem 0.375rem; }
+    .modal-overlay { padding: 1rem; }
+    .modal-body { padding: 1.25rem 1rem 1rem; }
+  }
+
+  @media (max-width: 480px) {
+    .top-bar { gap: 0.25rem; }
+    .logo { font-size: 1rem; }
+    .search-toggle { width: 2.25rem; height: 2.25rem; }
+    .theme-btn, .mode-toggle { width: 2.25rem; height: 2.25rem; }
+    .sort-btn { padding: 0.375rem 0.5rem; font-size: 0.75rem; }
+    .sort-bar { gap: 0.25rem; }
+    .browse-container { padding: 0.5rem; }
+    .video-grid { gap: 0.75rem; }
+    .card-body { padding: 0.625rem 0.75rem 0.75rem; }
+    .watch-layout { padding: 0.25rem 0.5rem; }
+    .watch-title { font-size: 1rem; }
+    .related-thumb { width: 120px; }
+    .player-wrapper { min-height: 30vh; }
+    .footer { font-size: 0.7rem; padding: 0.5rem; }
+    .modal-body { padding: 1rem 0.75rem; }
+  }
+
+  @media (min-width: 1400px) {
+    .video-grid { grid-template-columns: repeat(4, 1fr); }
+  }
+</style>
+</head>
+<body>
+  <div id="browseView">
+    <div class="top-bar">
+      <div class="top-bar-left">
+        <div class="sort-dropdown" id="browseSortDropdown">
+          <button class="sort-dropdown-btn" id="browseSortBtn">
+            <span id="browseSortLabel">Hot</span>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="m6 9 6 6 6-6"/></svg>
+          </button>
+          <div class="sort-dropdown-menu" id="browseSortMenu">
+            <button class="sort-dropdown-item active" data-sort="hot">Hot</button>
+            <button class="sort-dropdown-item" data-sort="new">New</button>
+            <div class="sort-dropdown-group">
+              <button class="sort-dropdown-item has-sub" data-sort="top">Top <span class="sub-arrow">▸</span></button>
+              <div class="sub-dropdown">
+                <button class="sort-dropdown-item" data-top-time="TopAll">All time</button>
+                <button class="sort-dropdown-item" data-top-time="TopYear">Past year</button>
+                <button class="sort-dropdown-item" data-top-time="TopMonth">Past month</button>
+                <button class="sort-dropdown-item" data-top-time="TopWeek">Past week</button>
+                <button class="sort-dropdown-item" data-top-time="TopDay">Today</button>
+              </div>
+            </div>
+            <button class="sort-dropdown-item" data-sort="rising">Rising</button>
+          </div>
+        </div>
+        <span class="logo" id="browseLogo">🍿 WatchWhileEating</span>
+      </div>
+      <div class="top-bar-center">
+        <div class="search-wrapper">
+          <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+          <input type="text" class="search-input" id="searchInput" placeholder="Search videos..." autocomplete="off">
+          <button class="search-close" id="browseSearchClose">✕</button>
+        </div>
+      </div>
+      <div class="top-bar-right">
+        <button class="search-toggle" id="browseSearchToggle" aria-label="Search">🔍</button>
+        <button class="theme-btn" id="themeBlue" title="Blue theme">🔵</button>
+        <button class="theme-btn active" id="themePink" title="Pink theme">🩷</button>
+        <button class="mode-toggle" id="modeToggle" title="Toggle dark/light mode">🌙</button>
+      </div>
+    </div>
+
+    <div class="controls-row">
+      <div class="top-bar-left" aria-hidden="true" style="visibility:hidden">
+        <span class="logo">🍿 WatchWhileEating</span>
+      </div>
+      <nav class="sort-bar">
+        <button class="sort-btn active" data-sort="hot">Hot</button>
+        <button class="sort-btn" data-sort="new">New</button>
+        <div class="time-select-wrapper">
+          <button class="sort-btn" data-sort="top">Top <span class="sub-arrow">▸</span></button>
+          <div class="sub-dropdown">
+            <button class="sort-dropdown-item" data-top-time="TopAll">All time</button>
+            <button class="sort-dropdown-item" data-top-time="TopYear">Past year</button>
+            <button class="sort-dropdown-item" data-top-time="TopMonth">Past month</button>
+            <button class="sort-dropdown-item" data-top-time="TopWeek">Past week</button>
+            <button class="sort-dropdown-item" data-top-time="TopDay">Today</button>
+          </div>
+        </div>
+        <button class="sort-btn" data-sort="rising">Rising</button>
+      </nav>
+      <div class="top-bar-right" aria-hidden="true" style="visibility:hidden">
+        <button class="theme-btn">🔵</button>
+        <button class="theme-btn">🩷</button>
+        <button class="mode-toggle">🌙</button>
+      </div>
+    </div>
+
+    <div class="scroll-wrap">
+      <main class="browse-container">
+        <div class="video-grid" id="grid"></div>
+        <div class="status-bar" id="statusBar"></div>
+        <div id="scrollSentinel"></div>
+      </main>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <p class="footer-main">🍿 WatchWhileEating — Videos to watch while eating</p>
+    <p class="footer-sub"><button class="footer-about" id="aboutBtn">About</button> &middot; Made by <strong>Aksangi</strong> &copy; <span id="footerYear"></span></p>
+  </footer>
+
+  <div class="modal-overlay" id="aboutModal">
+    <div class="modal">
+      <button class="modal-close" id="modalClose">&times;</button>
+      <div class="modal-body">
+        <h2 class="modal-title">🍿 WatchWhileEating</h2>
+        <p class="modal-desc">A front-end for <a href="https://lemmy.cafe/c/mealtimevideos" target="_blank" rel="noopener">!mealtimevideos@lemmy.cafe</a>. I built it because I kept digging through that community while eating and wanted something that felt more like browsing than scrolling a forum thread.</p>
+        <p class="modal-desc">It's a single HTML file — vanilla JS, the Lemmy API, YouTube embed. No build step, no framework, no tracking.</p>
+        <p class="modal-desc">The code is open source. If something breaks or you have an idea, find me on <a href="https://lemmy.world/u/Aksangi" target="_blank" rel="noopener">Lemmy</a>.</p>
+        <p class="modal-desc" style="margin-top:1rem;font-size:0.75rem;opacity:0.5">v1.0 &middot; powered by <a href="https://lemmy.cafe/c/mealtimevideos" target="_blank" rel="noopener">!mealtimevideos@lemmy.cafe</a></p>
+      </div>
+    </div>
+  </div>
+
+  <div id="watchView">
+    <div class="top-bar">
+      <div class="top-bar-left">
+        <div class="sort-dropdown" id="watchSortDropdown">
+          <button class="sort-dropdown-btn" id="watchSortBtn">
+            <span id="watchSortLabel">Hot</span>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="m6 9 6 6 6-6"/></svg>
+          </button>
+          <div class="sort-dropdown-menu" id="watchSortMenu">
+            <button class="sort-dropdown-item active" data-sort="hot">Hot</button>
+            <button class="sort-dropdown-item" data-sort="new">New</button>
+            <div class="sort-dropdown-group">
+              <button class="sort-dropdown-item has-sub" data-sort="top">Top <span class="sub-arrow">▸</span></button>
+              <div class="sub-dropdown">
+                <button class="sort-dropdown-item" data-top-time="TopAll">All time</button>
+                <button class="sort-dropdown-item" data-top-time="TopYear">Past year</button>
+                <button class="sort-dropdown-item" data-top-time="TopMonth">Past month</button>
+                <button class="sort-dropdown-item" data-top-time="TopWeek">Past week</button>
+                <button class="sort-dropdown-item" data-top-time="TopDay">Today</button>
+              </div>
+            </div>
+            <button class="sort-dropdown-item" data-sort="rising">Rising</button>
+          </div>
+        </div>
+        <span class="logo" id="watchLogo">🍿 WatchWhileEating</span>
+      </div>
+      <div class="top-bar-center">
+        <div class="search-wrapper">
+          <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+          <input type="text" class="search-input" id="watchSearchInput" placeholder="Search videos..." autocomplete="off">
+          <button class="search-close" id="watchSearchClose">✕</button>
+        </div>
+      </div>
+      <div class="top-bar-right">
+        <button class="search-toggle" id="watchSearchToggle" aria-label="Search">🔍</button>
+        <button class="theme-btn" id="watchThemeBlue" title="Blue theme">🔵</button>
+        <button class="theme-btn active" id="watchThemePink" title="Pink theme">🩷</button>
+        <button class="mode-toggle" id="watchModeToggle" title="Toggle dark/light mode">🌙</button>
+      </div>
+    </div>
+
+    <div class="scroll-wrap">
+      <div class="watch-layout">
+      <div class="watch-main">
+        <div class="player-wrapper" id="playerWrapper">
+          <div class="player-loading" id="playerLoading">
+            <div class="spinner"></div>
+            <span class="player-loading-text">Loading video…</span>
+          </div>
+          <div class="play-overlay" id="playOverlay">
+            <button class="play-btn" id="playBtn">
+              <svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg>
+            </button>
+          </div>
+          <div id="ytPlayerContainer"></div>
+        </div>
+
+        <div class="watch-info">
+          <h1 class="watch-title" id="watchTitle"></h1>
+          <div class="watch-meta-row">
+            <div class="watch-author" id="watchAuthor">
+              <img id="watchAuthorAvatar" src="" alt="">
+              <span id="watchAuthorName"></span>
+            </div>
+            <div class="watch-stats" id="watchStats"></div>
+          </div>
+          <div class="watch-description" id="watchDescription" style="display:none"></div>
+        </div>
+
+        <div class="comments-section" id="commentsSection">
+          <div class="comments-header">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            <span id="commentsHeader">Comments</span>
+          </div>
+          <div id="commentsList"></div>
+        </div>
+      </div>
+
+      <aside class="watch-sidebar">
+        <div class="sidebar-header">Related videos</div>
+        <div id="relatedList"></div>
+        <div id="relatedSentinel" style="height:1px"></div>
+      </aside>
+    </div>
+  </div>
+  </div>
+
+  <script>
+    const LEMMY_BASE = 'https://lemmy.cafe/api/v3';
+    const COMMUNITY = 'mealtimevideos';
+    const YT_STATE = { UNSTARTED: -1, ENDED: 0, PLAYING: 1, PAUSED: 2, BUFFERING: 3, CUED: 5 };
+
+    const state = {
+      sort: localStorage.getItem('ww-sort') || 'hot',
+      topTime: localStorage.getItem('ww-topTime') || 'TopAll',
+      pageCursor: null,
+      posts: [],
+      loading: false,
+      hasMore: true,
+      theme: localStorage.getItem('ww-theme') || 'pink',
+      mode: localStorage.getItem('ww-mode') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'),
+      searchQuery: '',
+      scrollY: 0,
+      currentPost: null,
+      relatedPosts: [],
+      relatedCursor: null,
+      relatedHasMore: true,
+      loadingRelated: false,
+    };
+
+    const $ = (sel, ctx = document) => ctx.querySelector(sel);
+    const $$ = (sel, ctx = document) => [...ctx.querySelectorAll(sel)];
+    const esc = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+
+    const els = {};
+    function cacheEls() {
+      const map = {
+        grid: '#grid', statusBar: '#statusBar',
+        searchInput: '#searchInput', watchSearchInput: '#watchSearchInput',
+        sortBtns: '.sort-btn', scrollSentinel: '#scrollSentinel',
+        modeToggle: '#modeToggle', themeBlue: '#themeBlue', themePink: '#themePink',
+        watchModeToggle: '#watchModeToggle', watchThemeBlue: '#watchThemeBlue', watchThemePink: '#watchThemePink',
+        browseView: '#browseView', watchView: '#watchView',
+        watchLogo: '#watchLogo', browseLogo: '#browseLogo',
+        watchTitle: '#watchTitle', watchAuthor: '#watchAuthor',
+        watchAuthorAvatar: '#watchAuthorAvatar', watchAuthorName: '#watchAuthorName',
+        watchStats: '#watchStats', watchDescription: '#watchDescription',
+        playerLoading: '#playerLoading', playOverlay: '#playOverlay', playBtn: '#playBtn',
+        ytPlayerContainer: '#ytPlayerContainer',
+        playerWrapper: '#playerWrapper',
+        commentsHeader: '#commentsHeader', commentsList: '#commentsList',
+        relatedList: '#relatedList', relatedSentinel: '#relatedSentinel',
+        browseSearchToggle: '#browseSearchToggle', watchSearchToggle: '#watchSearchToggle',
+        browseSortBtn: '#browseSortBtn', browseSortMenu: '#browseSortMenu', browseSortLabel: '#browseSortLabel',
+        watchSortBtn: '#watchSortBtn', watchSortMenu: '#watchSortMenu', watchSortLabel: '#watchSortLabel',
+        browseSortDropdown: '#browseSortDropdown', watchSortDropdown: '#watchSortDropdown',
+        sortDropdownItems: '.sort-dropdown-item[data-sort]',
+        topTimeItems: '.sub-dropdown .sort-dropdown-item',
+      };
+      for (const [k, sel] of Object.entries(map)) {
+        els[k] = sel === '.sort-btn' || sel === '.sort-dropdown-item[data-sort]' || sel === '.sub-dropdown .sort-dropdown-item' ? $$(sel) : $(sel);
+      }
+      els.watchView.style.display = 'none';
+      els.scrollContainer = $('#browseView .scroll-wrap') || els.grid?.parentElement?.parentElement;
+      els.watchScrollWrap = $('#watchView .scroll-wrap');
+    }
+
+    function applyTheme() {
+      document.documentElement.setAttribute('data-theme', state.theme);
+      document.documentElement.setAttribute('data-mode', state.mode);
+      localStorage.setItem('ww-theme', state.theme);
+      localStorage.setItem('ww-mode', state.mode);
+      els.themeBlue.classList.toggle('active', state.theme === 'blue');
+      els.themePink.classList.toggle('active', state.theme === 'pink');
+      els.watchThemeBlue.classList.toggle('active', state.theme === 'blue');
+      els.watchThemePink.classList.toggle('active', state.theme === 'pink');
+      const icon = state.mode === 'dark' ? '☀️' : '🌙';
+      els.modeToggle.textContent = icon;
+      els.watchModeToggle.textContent = icon;
+    }
+
+    function extractYouTubeId(url) {
+      if (!url) return null;
+      const m = url.match(/(?:youtube\.com\/watch\?v=)([\w-]{11})/);
+      if (m) return m[1];
+      const m2 = url.match(/(?:youtu\.be\/)([\w-]{11})/);
+      if (m2) return m2[1];
+      const m3 = url.match(/(?:youtube\.com\/embed\/)([\w-]{11})/);
+      if (m3) return m3[1];
+      return null;
+    }
+
+    function parseDuration(title) {
+      const m = title.match(/\[(\d{1,2}):(\d{2})\]/);
+      if (m) { const h = +m[1]; return h >= 60 ? `${Math.floor(h/60)}:${String(h%60).padStart(2,'0')}:${m[2]}` : `${h}:${m[2]}`; }
+      const m2 = title.match(/\[(\d+):(\d{2}):(\d{2})\]/);
+      if (m2) return `${+m2[1]}:${m2[2]}:${m2[3]}`;
+      const m3 = title.match(/\[(\d+):?(\d{0,2})\]/);
+      if (m3) return m3[2] ? `${m3[1]}:${m3[2]}` : `${m3[1]}:00`;
+      return '';
+    }
+
+    function cleanTitle(title) {
+      return title.replace(/\s*\[\d{1,2}:?\d{0,2}(?::\d{2})?\]\s*/g, '').trim();
+    }
+
+    function timeAgo(ts) {
+      const s = Math.floor((Date.now() / 1000 - ts));
+      if (s < 60) return 'just now';
+      if (s < 3600) return `${Math.floor(s / 60)}m ago`;
+      if (s < 86400) return `${Math.floor(s / 3600)}h ago`;
+      if (s < 2592000) return `${Math.floor(s / 86400)}d ago`;
+      return `${Math.floor(s / 2592000)}mo ago`;
+    }
+
+    function formatNum(n) {
+      if (n >= 1000000) return `${(n / 1000000).toFixed(1)}M`;
+      if (n >= 1000) return `${(n / 1000).toFixed(1)}k`;
+      return String(n);
+    }
+
+    function toLemmySort() {
+      if (state.sort === 'hot') return 'Hot';
+      if (state.sort === 'new') return 'New';
+      if (state.sort === 'rising') return 'Scaled';
+      if (state.sort === 'top') return state.topTime;
+      return 'Hot';
+    }
+
+    let ytApiLoaded = false;
+    function loadYouTubeAPI() {
+      return new Promise(resolve => {
+        if (window.YT?.Player) { ytApiLoaded = true; resolve(); return; }
+        const tag = document.createElement('script');
+        tag.src = 'https://www.youtube.com/player_api';
+        document.head.appendChild(tag);
+        window.onYouTubePlayerAPIReady = () => { ytApiLoaded = true; resolve(); };
+      });
+    }
+
+    async function fetchPosts(reset) {
+      if (state.loading) return;
+      if (reset) { state.posts = []; state.pageCursor = null; state.hasMore = true; }
+      state.loading = true;
+      if (reset) showStatus('spinner');
+      try {
+        const params = new URLSearchParams({ community_name: COMMUNITY, limit: '50' });
+        if (!state.searchQuery) params.set('sort', toLemmySort());
+        if (state.pageCursor) params.set('page_cursor', state.pageCursor);
+        let url;
+        if (state.searchQuery) {
+          params.set('q', state.searchQuery); params.set('type_', 'Posts'); params.set('sort', toLemmySort());
+          url = `${LEMMY_BASE}/search?${params}`;
+        } else {
+          url = `${LEMMY_BASE}/post/list?${params}`;
+        }
+        const res = await fetch(url);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const json = await res.json();
+        if (!json?.posts) throw new Error('Unexpected response format');
+        const parsed = json.posts.map(p => {
+          const d = p.post; const ytId = extractYouTubeId(d.url || '');
+          if (!ytId) return null;
+          return {
+            id: d.id, title: cleanTitle(d.name), duration: parseDuration(d.name),
+            youtubeId: ytId, youtubeUrl: d.url,
+            score: p.counts?.score || 0, comments: p.counts?.comments || 0,
+            author: p.creator?.display_name || p.creator?.name || 'unknown',
+            authorName: p.creator?.name || 'unknown', avatar: p.creator?.avatar || null,
+            created: new Date(d.published).getTime() / 1000,
+            thumbnail: `https://i.ytimg.com/vi/${ytId}/mqdefault.jpg`,
+            body: d.body || '',
+          };
+        }).filter(Boolean);
+        if (reset) state.posts = parsed; else state.posts.push(...parsed);
+        state.pageCursor = json.next_page || null;
+        state.hasMore = !!json.next_page;
+        renderGrid();
+      } catch (err) {
+        if (reset) showStatus('error', err.message);
+        state.hasMore = false;
+      } finally { state.loading = false; }
+    }
+
+    function renderGrid() {
+      if (state.posts.length === 0 && !state.loading) {
+        els.grid.innerHTML = '<div class="empty-state">No videos found. Try a different sort or time filter.</div>';
+        showStatus('none'); return;
+      }
+      els.grid.innerHTML = state.posts.map((p, i) => createCard(p, i)).join('');
+      showStatus('none');
+    }
+
+    function createCard(post, index) {
+      const avatarHtml = post.avatar ? `<img class="card-avatar" src="${esc(post.avatar)}" alt="" loading="lazy">` : '';
+      return `<div class="video-card fade-in" style="animation-delay:${Math.min(index * 50, 300)}ms" data-index="${index}">
+    <div class="card-thumb">
+      <img src="${esc(post.thumbnail)}" alt="${esc(post.title)}" loading="lazy" onerror="this.src='https://i.ytimg.com/vi/${esc(post.youtubeId)}/default.jpg'">
+      ${post.duration ? `<span class="card-duration">${esc(post.duration)}</span>` : ''}
+    </div>
+    <div class="card-body">
+      <div class="card-title">${esc(post.title)}</div>
+      <div class="card-meta">${avatarHtml}<span class="card-channel">${esc(post.author)}</span></div>
+      <div class="card-stats">
+        <div class="card-stat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"/><path d="m19 12-7-7-7 7"/></svg>${formatNum(post.score)}</div>
+        <div class="card-stat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>${formatNum(post.comments)}</div>
+        <span style="margin-left:auto;font-size:0.75rem">${timeAgo(post.created)}</span>
+      </div>
+    </div>
+  </div>`;
+    }
+
+    function showStatus(type, msg) {
+      if (type === 'spinner') {
+        els.statusBar.innerHTML = '<div class="spinner"></div>';
+      } else if (type === 'error') {
+        els.statusBar.innerHTML = `<div class="error-msg"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><span>${esc(msg)}</span></div>`;
+      } else {
+        els.statusBar.innerHTML = '';
+        if (state.posts.length > 0 && !state.loading) {
+          const label = state.searchQuery ? ` matching &quot;${esc(state.searchQuery)}&quot;` : '';
+          els.statusBar.innerHTML = `<span style="font-size:0.8rem;color:var(--fg-secondary)">${state.posts.length} ${state.posts.length === 1 ? 'video' : 'videos'}${label}</span>`;
+        }
+      }
+    }
+
+    function updateSortUI() {
+      els.sortBtns.forEach(b => b.classList.toggle('active', b.dataset.sort === state.sort));
+      els.sortDropdownItems.forEach(b => b.classList.toggle('active', b.dataset.sort === state.sort));
+      els.topTimeItems.forEach(b => b.classList.toggle('active', b.dataset.topTime === state.topTime));
+      const timeLabels = { TopAll: 'All', TopYear: 'Year', TopMonth: 'Month', TopWeek: 'Week', TopDay: 'Day' };
+      let label = state.sort.charAt(0).toUpperCase() + state.sort.slice(1);
+      if (state.sort === 'top' && timeLabels[state.topTime]) {
+        label = 'Top — ' + timeLabels[state.topTime];
+      }
+      if (els.browseSortLabel) els.browseSortLabel.textContent = label;
+      if (els.watchSortLabel) els.watchSortLabel.textContent = label;
+    }
+
+    function syncSearchInputs() {
+      if (els.searchInput && els.watchSearchInput) {
+        els.searchInput.value = state.searchQuery;
+        els.watchSearchInput.value = state.searchQuery;
+      }
+    }
+
+    function handleSearchInput(value) {
+      const q = value.trim();
+      if (q === state.searchQuery) return;
+      state.searchQuery = q;
+      syncSearchInputs();
+      fetchPosts(true);
+    }
+
+    /* ===== YouTube Player ===== */
+    function stopVideo() {
+      if (window.ytPlayer && window.ytPlayer.destroy) {
+        window.ytPlayer.destroy();
+        window.ytPlayer = null;
+      }
+      els.playerLoading.classList.add('hidden');
+      els.playOverlay.style.display = 'none';
+    }
+
+    function initPlayer(post) {
+      stopVideo();
+      window.ytPlayer = new YT.Player('ytPlayerContainer', {
+        videoId: post.youtubeId,
+        playerVars: { controls: 1, autoplay: 1, rel: 0, modestbranding: 1, playsinline: 1 },
+        events: {
+          onReady: (e) => {
+            try { e.target.playVideo(); } catch (_) {}
+          },
+          onStateChange: (e) => {
+            if (e.data === YT_STATE.PLAYING || e.data === YT_STATE.BUFFERING) {
+              els.playOverlay.style.display = 'none';
+              els.playerLoading.classList.add('hidden');
+            } else if (e.data === YT_STATE.CUED) {
+              els.playOverlay.style.display = 'flex';
+              els.playerLoading.classList.add('hidden');
+            }
+          },
+        },
+      });
+    }
+
+    /* ===== Navigation ===== */
+    function showBrowseView() {
+      stopVideo();
+      els.watchView.style.display = 'none';
+      els.browseView.style.display = 'flex';
+      if (els.scrollContainer) els.scrollContainer.scrollTop = state.scrollY;
+      syncSearchInputs();
+    }
+
+    function showWatchView(post) {
+      state.currentPost = post;
+      sessionStorage.setItem('ww-current-post', JSON.stringify(post));
+      state.scrollY = els.scrollContainer ? els.scrollContainer.scrollTop : 0;
+      els.browseView.style.display = 'none';
+      els.watchView.style.display = 'flex';
+      if (els.watchScrollWrap) els.watchScrollWrap.scrollTop = 0;
+      syncSearchInputs();
+
+      els.watchTitle.textContent = post.title;
+      els.watchAuthorName.textContent = post.author;
+      if (post.avatar) { els.watchAuthorAvatar.src = post.avatar; els.watchAuthorAvatar.style.display = ''; }
+      else { els.watchAuthorAvatar.style.display = 'none'; }
+
+      els.watchStats.innerHTML = `
+        <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"/><path d="m19 12-7-7-7 7"/></svg>${formatNum(post.score)}</span>
+        <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>${formatNum(post.comments)}</span>
+        <span>• ${timeAgo(post.created)}</span>`;
+
+      if (post.body) { els.watchDescription.textContent = post.body; els.watchDescription.style.display = 'block'; }
+      else { els.watchDescription.style.display = 'none'; }
+
+      renderRelated(post);
+      renderComments(post);
+
+      if (ytApiLoaded) {
+        initPlayer(post);
+      } else {
+        loadYouTubeAPI().then(() => initPlayer(post));
+      }
+    }
+
+    function navigateToWatch(post) {
+      if (!post) return;
+      stopVideo();
+      history.pushState({ view: 'watch', ytId: post.youtubeId }, '', '#/watch/' + post.youtubeId);
+      if (ytApiLoaded) {
+        showWatchView(post);
+      } else {
+        els.browseView.style.display = 'none';
+        els.watchView.style.display = 'flex';
+        loadYouTubeAPI().then(() => showWatchView(post));
+      }
+    }
+
+    function navigateToBrowse() {
+      stopVideo();
+      if (state.searchQuery) {
+        state.searchQuery = '';
+        syncSearchInputs();
+        fetchPosts(true);
+      }
+      history.pushState({ view: 'browse' }, '', '#/');
+      showBrowseView();
+    }
+
+    function navigateToRelated(post) {
+      stopVideo();
+      history.pushState({ view: 'watch', ytId: post.youtubeId }, '', '#/watch/' + post.youtubeId);
+      showWatchView(post);
+    }
+
+    /* ===== Related ===== */
+    const STOP_WORDS = new Set(['a','an','the','in','on','at','to','for','of','with','and','or','is','are','was','were','be','been','being','it','its','this','that','these','those','i','you','he','she','we','they','me','him','her','us','them','my','your','his','their','our','have','has','had','do','does','did','but','if','so','not','no','up','out','about','just','can','will','would','could','should','what','which','who','how','when','where','why','from','by','as','into','through','during','before','after','all','each','every','both','few','more','most','some','any','very','too','much','many','here','there','then','than','also','get','got','make','made','like','way','one','two','new','now','even','still','well','back','down']);
+
+    function getKeywords(title) {
+      return title.toLowerCase().replace(/[^a-z0-9\s'-]/g,'').split(/\s+/).filter(w => w.length > 1 && !STOP_WORDS.has(w));
+    }
+
+    function relevanceScore(currentTitle, currentAuthor, candidate) {
+      const curWords = getKeywords(currentTitle);
+      if (curWords.length === 0) return 0;
+      const candWords = getKeywords(candidate.title);
+      let score = 0;
+      for (const w of curWords) {
+        if (candWords.includes(w)) score += w.length >= 5 ? 3 : 2;
+      }
+      if (currentAuthor === candidate.authorName) score += 2;
+      return score;
+    }
+    async function fetchRelatedPosts(reset) {
+      if (state.loadingRelated) return;
+      state.loadingRelated = true;
+      try {
+        const params = new URLSearchParams({ community_name: COMMUNITY, limit: '50', sort: 'Hot' });
+        if (!reset && state.relatedCursor) params.set('page_cursor', state.relatedCursor);
+        const res = await fetch(`${LEMMY_BASE}/post/list?${params}`);
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const json = await res.json();
+        if (!json?.posts) throw new Error('Unexpected response');
+        const parsed = json.posts.map(p => {
+          const d = p.post; const ytId = extractYouTubeId(d.url || '');
+          if (!ytId) return null;
+          return {
+            id: d.id, title: cleanTitle(d.name), duration: parseDuration(d.name),
+            youtubeId: ytId, youtubeUrl: d.url,
+            score: p.counts?.score || 0, comments: p.counts?.comments || 0,
+            author: p.creator?.display_name || p.creator?.name || 'unknown',
+            authorName: p.creator?.name || 'unknown', avatar: p.creator?.avatar || null,
+            created: new Date(d.published).getTime() / 1000,
+            thumbnail: `https://i.ytimg.com/vi/${ytId}/mqdefault.jpg`,
+            body: d.body || '',
+          };
+        }).filter(Boolean);
+        if (reset) state.relatedPosts = parsed; else state.relatedPosts.push(...parsed);
+        state.relatedCursor = json.next_page || null;
+        state.relatedHasMore = !!json.next_page;
+      } catch (_) { state.relatedHasMore = false; }
+      state.loadingRelated = false;
+    }
+
+    function renderRelated(current) {
+      if (state.relatedPosts.length === 0) {
+        fetchRelatedPosts(true).then(() => renderRelatedContent());
+        els.relatedList.innerHTML = '<div class="spinner"></div>';
+        return;
+      }
+      renderRelatedContent();
+    }
+
+    function renderRelatedContent() {
+      const current = state.currentPost;
+      if (!current) return;
+      let related = state.relatedPosts.filter(p => p.youtubeId !== current.youtubeId);
+      if (related.length === 0) { els.relatedList.innerHTML = '<div style="font-size:0.85rem;color:var(--fg-secondary)">No related videos yet.</div>'; return; }
+      const seen = new Set();
+      const unique = [];
+      for (const p of related) { if (!seen.has(p.youtubeId)) { seen.add(p.youtubeId); unique.push(p); } }
+      const scored = unique.map(p => ({ post: p, score: relevanceScore(current.title, current.authorName, p) }));
+      scored.sort((a, b) => b.score - a.score || b.post.score - a.post.score);
+      els.relatedList.innerHTML = scored.map(({ post: p }) => `
+        <div class="related-card" data-yt="${esc(p.youtubeId)}">
+          <div class="related-thumb"><img src="${esc(p.thumbnail)}" alt="${esc(p.title)}" loading="lazy" onerror="this.src='https://i.ytimg.com/vi/${esc(p.youtubeId)}/default.jpg'"></div>
+          <div class="related-info">
+            <div class="related-title">${esc(p.title)}</div>
+            <div class="related-meta">${esc(p.author)}<br>${formatNum(p.score)} points</div>
+          </div>
+        </div>`).join('');
+      els.relatedSentinel.style.display = state.relatedHasMore ? '' : 'none';
+      els.relatedList.querySelectorAll('.related-card').forEach(el => {
+        el.addEventListener('click', () => {
+          const post = state.relatedPosts.find(p => p.youtubeId === el.dataset.yt);
+          if (post) navigateToRelated(post);
+        });
+      });
+    }
+
+    /* ===== Comments ===== */
+    async function renderComments(post) {
+      els.commentsHeader.textContent = `💬 Comments (${formatNum(post.comments)})`;
+      if (post.comments === 0) { els.commentsList.innerHTML = '<div style="font-size:0.85rem;color:var(--fg-secondary);padding:0.5rem 0">No comments yet.</div>'; return; }
+      els.commentsList.innerHTML = '<div class="spinner" style="margin:1rem auto"></div>';
+      try {
+        const res = await fetch(`${LEMMY_BASE}/comment/list?post_id=${post.id}&limit=20&sort=Hot`);
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const json = await res.json();
+        const comments = json.comments || [];
+        if (comments.length === 0) { els.commentsList.innerHTML = '<div style="font-size:0.85rem;color:var(--fg-secondary);padding:0.5rem 0">No comments yet.</div>'; return; }
+        els.commentsList.innerHTML = comments.map(c => {
+          const cv = c.comment || {}; const cr = c.creator || {}; const cnt = c.counts || {};
+          const avatarUrl = cr.avatar || ''; const initial = (cr.name || '?')[0].toUpperCase();
+          return `<div class="comment">
+            <div class="comment-avatar">${avatarUrl ? `<img src="${esc(avatarUrl)}" alt="">` : initial}</div>
+            <div class="comment-body">
+              <div><span class="comment-author">${esc(cr.display_name || cr.name || 'unknown')}</span><span class="comment-time">${timeAgo(new Date(cv.published).getTime() / 1000)}</span></div>
+              <div class="comment-content">${esc(cv.content || '')}</div>
+              <div class="comment-score">👍 ${formatNum(cnt.score || 0)}</div>
+            </div>
+          </div>`;
+        }).join('');
+      } catch (_) { els.commentsList.innerHTML = '<div style="font-size:0.85rem;color:var(--fg-secondary);padding:0.5rem 0">Could not load comments.</div>'; }
+    }
+
+    /* ===== Init ===== */
+    function restoreFromHash() {
+      const match = location.hash.match(/^#\/watch\/([\w-]{11})/);
+      if (!match) return;
+      const ytId = match[1];
+      let post = state.posts.find(p => p.youtubeId === ytId);
+      if (post) { showWatchView(post); return; }
+      try {
+        const saved = JSON.parse(sessionStorage.getItem('ww-current-post'));
+        if (saved?.youtubeId === ytId) showWatchView(saved);
+      } catch (_) {}
+    }
+
+    async function init() {
+      if (location.protocol === 'file:') {
+        document.body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;min-height:100vh;padding:2rem;font-family:var(--font-sans);background:var(--bg);color:var(--fg)"><div style="text-align:center;max-width:480px"><h1 style="font-size:1.5rem;margin-bottom:1rem">🍿 WatchWhileEating</h1><p style="margin-bottom:0.75rem;color:var(--fg-secondary)">This page won\'t work when opened directly as a file.</p><p style="margin-bottom:1.5rem;color:var(--fg-secondary)">Serve it with any static HTTP server, e.g.:</p><pre style="background:var(--muted);padding:0.75rem 1rem;border-radius:8px;text-align:left;font-size:0.8rem;overflow-x:auto">python3 -m http.server 8080</pre></div></div>';
+        return;
+      }
+
+      cacheEls();
+      applyTheme();
+      updateSortUI();
+
+      els.playBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (window.ytPlayer && window.ytPlayer.playVideo) {
+          window.ytPlayer.playVideo();
+        }
+      });
+
+      document.getElementById('footerYear').textContent = new Date().getFullYear();
+
+      loadYouTubeAPI();
+
+      await fetchPosts(true);
+      restoreFromHash();
+
+      const sentinelObserver = new IntersectionObserver(entries => {
+        if (entries[0].isIntersecting && state.hasMore && !state.loading) fetchPosts(false);
+      }, { rootMargin: '400px' });
+      if (els.scrollSentinel) sentinelObserver.observe(els.scrollSentinel);
+
+      const relatedSentinelObserver = new IntersectionObserver(entries => {
+        if (entries[0].isIntersecting && state.relatedHasMore && !state.loadingRelated) {
+          fetchRelatedPosts(false).then(() => {
+            if (state.currentPost && els.watchView.style.display !== 'none') renderRelatedContent();
+          });
+        }
+      }, { rootMargin: '400px' });
+      if (els.relatedSentinel) relatedSentinelObserver.observe(els.relatedSentinel);
+
+      els.grid.addEventListener('click', e => {
+        const card = e.target.closest('.video-card');
+        if (!card) return;
+        const post = state.posts[parseInt(card.dataset.index)];
+        if (post) navigateToWatch(post);
+      });
+
+      els.watchLogo.addEventListener('click', navigateToBrowse);
+      if (els.browseLogo) els.browseLogo.addEventListener('click', navigateToBrowse);
+
+      window.addEventListener('popstate', e => {
+        if (e.state?.view === 'watch' && e.state.ytId) {
+          const post = state.posts.find(p => p.youtubeId === e.state.ytId) || state.relatedPosts.find(p => p.youtubeId === e.state.ytId);
+          if (post) { showWatchView(post); return; }
+        }
+        showBrowseView();
+      });
+
+      els.sortBtns.forEach(btn => {
+        btn.addEventListener('click', async (e) => {
+          const sort = btn.dataset.sort;
+          if (sort === 'top') {
+            const wrapper = btn.closest('.time-select-wrapper');
+            if (!wrapper) return;
+            const sub = wrapper.querySelector('.sub-dropdown');
+            if (!sub) return;
+            const open = sub.classList.contains('open');
+            closeSubDropdowns();
+            if (!open) {
+              const r = btn.getBoundingClientRect();
+              sub.style.top = (r.bottom + 4) + 'px';
+              sub.style.left = Math.min(r.left, window.innerWidth - 160) + 'px';
+              sub.classList.add('open');
+              e.stopPropagation();
+            }
+            return;
+          }
+          if (!sort || sort === state.sort) return;
+          state.sort = sort;
+          localStorage.setItem('ww-sort', sort);
+          updateSortUI();
+          await fetchPosts(true);
+        });
+      });
+
+      let searchTimer;
+      function onSearchInput(e) {
+        clearTimeout(searchTimer);
+        searchTimer = setTimeout(() => handleSearchInput(e.target.value), 400);
+      }
+      els.searchInput.addEventListener('input', onSearchInput);
+      els.watchSearchInput.addEventListener('input', onSearchInput);
+
+      function toggleSearch(topBar) {
+        topBar.classList.toggle('search-open');
+        const input = topBar.querySelector('.search-input');
+        if (topBar.classList.contains('search-open')) {
+          closeSortDropdowns();
+          input?.focus();
+        }
+        else { input?.blur(); input && (input.value = ''); handleSearchInput(''); }
+      }
+      els.browseSearchToggle.addEventListener('click', () => toggleSearch(els.browseSearchToggle.closest('.top-bar')));
+      els.watchSearchToggle.addEventListener('click', () => toggleSearch(els.watchSearchToggle.closest('.top-bar')));
+      const closeHandler = () => {
+        document.querySelectorAll('.top-bar.search-open').forEach(tb => toggleSearch(tb));
+      };
+      document.getElementById('browseSearchClose').addEventListener('click', closeHandler);
+      document.getElementById('watchSearchClose').addEventListener('click', closeHandler);
+      document.addEventListener('keydown', e => {
+        if (e.key === 'Escape') {
+          document.querySelectorAll('.top-bar.search-open').forEach(tb => toggleSearch(tb));
+        }
+      });
+
+      function toggleSortDropdown(btn, menu) {
+        closeSubDropdowns();
+        const open = menu.classList.contains('open');
+        document.querySelectorAll('.sort-dropdown-menu.open').forEach(m => {
+          m.classList.remove('open');
+          m.style.top = ''; m.style.left = '';
+        });
+        if (!open) {
+          const r = btn.getBoundingClientRect();
+          menu.style.top = (r.bottom + 4) + 'px';
+          menu.style.left = Math.min(r.left, window.innerWidth - 160) + 'px';
+          menu.classList.add('open');
+        }
+      }
+      function closeSortDropdowns() {
+        closeSubDropdowns();
+        document.querySelectorAll('.sort-dropdown-menu.open').forEach(m => {
+          m.classList.remove('open');
+          m.style.top = ''; m.style.left = '';
+        });
+      }
+      function toggleSubDropdown(parentGroup) {
+        const menu = parentGroup.querySelector('.sub-dropdown');
+        if (!menu) return;
+        const open = menu.classList.contains('open');
+        closeSubDropdowns();
+        if (!open) {
+          const btn = parentGroup.querySelector('.has-sub');
+          const r = btn.getBoundingClientRect();
+          menu.style.top = r.top + 'px';
+          menu.style.left = Math.min(r.right + 4, window.innerWidth - 130) + 'px';
+          menu.classList.add('open');
+        }
+      }
+      function closeSubDropdowns() {
+        document.querySelectorAll('.sub-dropdown.open').forEach(m => {
+          m.classList.remove('open');
+          m.style.top = ''; m.style.left = '';
+        });
+      }
+      els.browseSortBtn.addEventListener('click', e => { e.stopPropagation(); toggleSortDropdown(els.browseSortBtn, els.browseSortMenu); });
+      els.watchSortBtn.addEventListener('click', e => { e.stopPropagation(); toggleSortDropdown(els.watchSortBtn, els.watchSortMenu); });
+      els.sortDropdownItems.forEach(item => {
+        item.addEventListener('click', async (e) => {
+          const sort = item.dataset.sort;
+          if (sort === 'top') {
+            e.stopPropagation();
+            toggleSubDropdown(item.closest('.sort-dropdown-group') || item.parentElement);
+            return;
+          }
+          if (!sort || sort === state.sort) { closeSortDropdowns(); return; }
+          state.sort = sort;
+          localStorage.setItem('ww-sort', sort);
+          updateSortUI();
+          closeSortDropdowns();
+          await fetchPosts(true);
+        });
+      });
+      els.topTimeItems.forEach(item => {
+        item.addEventListener('click', async (e) => {
+          e.stopPropagation();
+          const time = item.dataset.topTime;
+          if (!time) return;
+          state.sort = 'top';
+          state.topTime = time;
+          localStorage.setItem('ww-sort', 'top');
+          localStorage.setItem('ww-topTime', time);
+          updateSortUI();
+          closeSortDropdowns();
+          await fetchPosts(true);
+        });
+      });
+      document.addEventListener('click', closeSortDropdowns);
+      document.querySelectorAll('.scroll-wrap').forEach(w => w.addEventListener('scroll', closeSubDropdowns));
+      document.addEventListener('keydown', e => {
+        if (e.key === 'Escape') {
+          document.querySelectorAll('.top-bar.search-open').forEach(tb => toggleSearch(tb));
+        }
+      });
+
+      const setTheme = t => { state.theme = t; applyTheme(); };
+      els.themeBlue.addEventListener('click', () => setTheme('blue'));
+      els.themePink.addEventListener('click', () => setTheme('pink'));
+      els.watchThemeBlue.addEventListener('click', () => setTheme('blue'));
+      els.watchThemePink.addEventListener('click', () => setTheme('pink'));
+
+      function toggleMode() {
+        state.mode = state.mode === 'dark' ? 'light' : 'dark';
+        applyTheme();
+      }
+      els.modeToggle.addEventListener('click', toggleMode);
+      els.watchModeToggle.addEventListener('click', toggleMode);
+
+      const modal = document.getElementById('aboutModal');
+      document.getElementById('aboutBtn').addEventListener('click', () => modal.classList.add('open'));
+      document.getElementById('modalClose').addEventListener('click', () => modal.classList.remove('open'));
+      modal.addEventListener('click', e => { if (e.target === modal) modal.classList.remove('open'); });
+      document.addEventListener('keydown', e => { if (e.key === 'Escape') modal.classList.remove('open'); });
+    }
+
+    document.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+</html>
